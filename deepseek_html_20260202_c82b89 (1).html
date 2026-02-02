@@ -1,0 +1,2319 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متابعة إنجازات الأسابيع (على جهازك فقط)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0ea5e9;
+            --secondary-color: #7e22ce;
+            --dark-bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.8);
+            --text-color: #f1f5f9;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ألوان الموقع */
+        .theme-turquoise {
+            --primary-color: #06b6d4;
+            --secondary-color: #0ea5e9;
+            --gradient-bg: linear-gradient(135deg, #0f172a 0%, #0e7490 100%);
+        }
+        
+        .theme-blue {
+            --primary-color: #3b82f6;
+            --secondary-color: #1d4ed8;
+            --gradient-bg: linear-gradient(135deg, #0f172a 0%, #1e40af 100%);
+        }
+        
+        .theme-green {
+            --primary-color: #10b981;
+            --secondary-color: #059669;
+            --gradient-bg: linear-gradient(135deg, #0f172a 0%, #047857 100%);
+        }
+        
+        .theme-yellow {
+            --primary-color: #f59e0b;
+            --secondary-color: #d97706;
+            --gradient-bg: linear-gradient(135deg, #0f172a 0%, #92400e 100%);
+        }
+        
+        .theme-pink {
+            --primary-color: #ec4899;
+            --secondary-color: #be185d;
+            --gradient-bg: linear-gradient(135deg, #0f172a 0%, #831843 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--gradient-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            transition: var(--transition);
+        }
+
+        /* خلفية متحركة */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-element {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+            opacity: 0.05;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0) scale(1); }
+            25% { transform: translateY(-100px) translateX(100px) scale(1.1); }
+            50% { transform: translateY(0) translateX(200px) scale(1); }
+            75% { transform: translateY(100px) translateX(100px) scale(0.9); }
+            100% { transform: translateY(0) translateX(0) scale(1); }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* الهيدر الرئيسي */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 20px 0;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+        }
+
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .site-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .date-info {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 500;
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+        }
+
+        .theme-selector {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 8px 0;
+        }
+
+        .theme-color {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .theme-color:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-color.active {
+            border-color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .theme-turquoise-color {
+            background-color: #06b6d4;
+        }
+
+        .theme-blue-color {
+            background-color: #3b82f6;
+        }
+
+        .theme-green-color {
+            background-color: #10b981;
+        }
+
+        .theme-yellow-color {
+            background-color: #f59e0b;
+        }
+
+        .theme-pink-color {
+            background-color: #ec4899;
+        }
+
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .week-nav, .data-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-primary:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .week-stats {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 12px;
+            border-radius: var(--border-radius);
+            margin-top: 8px;
+        }
+
+        /* شريط مختصر */
+        .quick-bar {
+            background-color: var(--card-bg);
+            padding: 12px 18px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .quick-stats {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .quick-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .quick-btn {
+            padding: 8px 16px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .quick-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* شريط التقدم الأسبوعي الكبير */
+        .weekly-progress-card {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .progress-bar-container {
+            height: 30px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: var(--border-radius);
+            width: 0%;
+            transition: width 1s ease;
+        }
+
+        .progress-explanation {
+            text-align: center;
+            font-size: 0.95rem;
+            opacity: 0.9;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* شبكة الأيام - كل يومين */
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .day-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .day-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .day-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .day-date {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .task-input-container {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .task-input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .add-task-btn {
+            padding: 0 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .add-task-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .day-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .day-stat {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: var(--border-radius);
+            text-align: center;
+        }
+
+        .day-stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .day-stat-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .day-progress-bar {
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 12px 0;
+            overflow: hidden;
+        }
+
+        .day-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .tasks-list {
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-left: 8px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: var(--border-radius);
+            margin-bottom: 8px;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .task-item.completed {
+            background-color: rgba(16, 185, 129, 0.15);
+            border-right: 3px solid var(--success-color);
+        }
+
+        .task-item.pending {
+            background-color: rgba(245, 158, 11, 0.15);
+            border-right: 3px solid var(--warning-color);
+        }
+
+        .task-item.cancelled {
+            background-color: rgba(239, 68, 68, 0.15);
+            border-right: 3px solid var(--danger-color);
+            opacity: 0.8;
+        }
+
+        .task-text {
+            flex: 1;
+            margin: 0 12px;
+            word-break: break-word;
+            font-size: 0.9rem;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .task-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .task-btn.complete {
+            background-color: var(--success-color);
+        }
+
+        .task-btn.cancel {
+            background-color: var(--danger-color);
+        }
+
+        .task-btn.edit {
+            background-color: var(--warning-color);
+        }
+
+        .task-btn.delete {
+            background-color: #6b7280;
+        }
+
+        .task-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* قسم المهام الأسبوعية */
+        .weekly-tasks-section {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .weekly-input-container {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .weekly-task-input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .add-weekly-task-btn {
+            padding: 0 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .add-weekly-task-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .weekly-progress-container {
+            margin: 20px 0;
+        }
+
+        .clear-weekly-btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--border-radius);
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: block;
+            margin-right: auto;
+            margin-left: auto;
+            font-size: 0.9rem;
+        }
+
+        .clear-weekly-btn:hover {
+            background-color: rgba(239, 68, 68, 0.3);
+        }
+
+        /* قسم "رسالة لنفسك" */
+        .notes-section {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .notes-textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: none;
+            border-radius: var(--border-radius);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.95rem;
+            resize: vertical;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .notes-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .notes-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .save-notes-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .save-notes-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .clear-notes-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+        }
+
+        .clear-notes-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* قسم الأسئلة الشائعة */
+        .faq-section {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .faq-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .faq-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            transform: translateX(-5px);
+        }
+
+        .faq-question {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .faq-answer {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            padding-right: 30px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 200px;
+        }
+
+        .faq-icon {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        /* قسم حقوق الطبع والنشر والتحفيز */
+        .footer-section {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .motivation {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 15px 0;
+            padding: 10px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(126, 34, 206, 0.1));
+            border-radius: var(--border-radius);
+            animation: pulseMotivation 2s infinite alternate;
+        }
+
+        @keyframes pulseMotivation {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.02); }
+        }
+
+        .encouragement {
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin-top: 15px;
+            padding: 8px 15px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            display: inline-block;
+        }
+
+        /* زر "أعلى الصفحة" - نقل فوق قسم الحقوق */
+        .to-top-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .to-top-btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .to-top-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* تأثيرات التحقق */
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg) scale(0); opacity: 0; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+            20%, 40%, 60%, 80% { transform: translateX(4px); }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background-color: var(--success-color);
+            opacity: 0;
+            z-index: 9999;
+            animation: confetti 1.5s ease-out forwards;
+            border-radius: 50%;
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        /* تأثير تغيير الأسبوع */
+        .week-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            z-index: 9998;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .week-transition.active {
+            opacity: 0.3;
+        }
+
+        /* تأثير عند الضغط على ✅ */
+        .task-success-effect {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, transparent 70%);
+            border-radius: var(--border-radius);
+            z-index: -1;
+            opacity: 0;
+            animation: pulseSuccess 1s ease-out;
+        }
+
+        @keyframes pulseSuccess {
+            0% { opacity: 0; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0; transform: scale(1.3); }
+        }
+
+        /* تأثير عند الضغط على ❌ */
+        .task-error-effect {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.3) 0%, transparent 70%);
+            border-radius: var(--border-radius);
+            z-index: -1;
+            opacity: 0;
+            animation: pulseError 1s ease-out;
+        }
+
+        @keyframes pulseError {
+            0% { opacity: 0; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0; transform: scale(1.3); }
+        }
+
+        /* تأثير ظهور الأسئلة الشائعة */
+        .faq-reveal {
+            animation: faqReveal 0.5s ease-out;
+        }
+
+        @keyframes faqReveal {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* التجاوبية للابتوب والتاب والآيباد */
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 1000px;
+                padding: 0 20px;
+            }
+            
+            .days-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            
+            .progress-stats {
+                gap: 15px;
+            }
+            
+            .stat-item {
+                min-width: 130px;
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .container {
+                max-width: 900px;
+                padding: 0 18px;
+            }
+            
+            .site-title {
+                font-size: 1.6rem;
+            }
+            
+            .days-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 18px;
+            }
+            
+            .day-card {
+                padding: 18px;
+            }
+            
+            .progress-stats {
+                gap: 12px;
+            }
+            
+            .stat-item {
+                min-width: 110px;
+                padding: 12px;
+            }
+            
+            .weekly-progress-card,
+            .weekly-tasks-section,
+            .notes-section,
+            .faq-section,
+            .footer-section {
+                padding: 22px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* تصميم للآيباد */
+            .container {
+                padding: 0 15px;
+            }
+            
+            .site-title {
+                font-size: 1.4rem;
+            }
+            
+            .date-info {
+                font-size: 1rem;
+                padding: 8px 15px;
+            }
+            
+            .nav-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .week-nav, .data-controls {
+                justify-content: center;
+                width: 100%;
+                gap: 10px;
+            }
+            
+            .btn {
+                padding: 9px 16px;
+                font-size: 0.85rem;
+                flex: 1;
+                justify-content: center;
+                min-width: 120px;
+            }
+            
+            .days-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .day-card {
+                padding: 16px;
+            }
+            
+            .progress-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .stat-item {
+                min-width: auto;
+                padding: 10px;
+            }
+            
+            .quick-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+            
+            .quick-nav {
+                width: 100%;
+                justify-content: space-between;
+                gap: 10px;
+            }
+            
+            .quick-btn {
+                flex: 1;
+                text-align: center;
+                font-size: 0.85rem;
+                padding: 8px 12px;
+            }
+            
+            .section-title {
+                font-size: 1.2rem;
+            }
+            
+            .weekly-input-container, .task-input-container {
+                flex-direction: column;
+            }
+            
+            .task-input, .weekly-task-input {
+                border-radius: var(--border-radius);
+                margin-bottom: 10px;
+                font-size: 0.85rem;
+            }
+            
+            .add-task-btn, .add-weekly-task-btn {
+                border-radius: var(--border-radius);
+                width: 100%;
+                padding: 10px;
+                font-size: 0.85rem;
+            }
+            
+            .notes-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .notes-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            /* تصميم للتاب والأجهزة الصغيرة */
+            .container {
+                padding: 0 12px;
+            }
+            
+            .site-title {
+                font-size: 1.2rem;
+            }
+            
+            .date-info {
+                font-size: 0.9rem;
+                padding: 6px 12px;
+            }
+            
+            .theme-selector {
+                gap: 8px;
+            }
+            
+            .theme-color {
+                width: 30px;
+                height: 30px;
+            }
+            
+            .btn {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+                min-width: 100px;
+            }
+            
+            .week-stats {
+                font-size: 1rem;
+                padding: 10px;
+            }
+            
+            .quick-stats {
+                font-size: 1.2rem;
+            }
+            
+            .days-grid {
+                gap: 12px;
+            }
+            
+            .day-card {
+                padding: 14px;
+            }
+            
+            .day-name {
+                font-size: 1.1rem;
+            }
+            
+            .day-stat-value {
+                font-size: 1.1rem;
+            }
+            
+            .task-text {
+                font-size: 0.85rem;
+            }
+            
+            .task-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
+            }
+            
+            .section-title {
+                font-size: 1.1rem;
+            }
+            
+            .stat-value {
+                font-size: 1.4rem;
+            }
+            
+            .progress-explanation {
+                font-size: 0.9rem;
+            }
+            
+            .weekly-progress-card,
+            .weekly-tasks-section,
+            .notes-section,
+            .faq-section,
+            .footer-section {
+                padding: 18px;
+            }
+            
+            .motivation {
+                font-size: 1rem;
+                padding: 8px;
+            }
+            
+            .encouragement {
+                font-size: 1rem;
+                padding: 6px 12px;
+            }
+            
+            .to-top-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .site-title {
+                font-size: 1.1rem;
+            }
+            
+            .date-info {
+                font-size: 0.85rem;
+            }
+            
+            .btn {
+                padding: 7px 10px;
+                font-size: 0.75rem;
+                min-width: 90px;
+            }
+            
+            .quick-btn {
+                padding: 6px 8px;
+                font-size: 0.75rem;
+            }
+            
+            .days-grid {
+                gap: 10px;
+            }
+            
+            .day-card {
+                padding: 12px;
+            }
+            
+            .day-stats {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .day-stat {
+                padding: 8px;
+            }
+        }
+
+        /* تخصيص شريط التمرير */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+    </style>
+</head>
+<body class="theme-turquoise">
+    <!-- خلفية متحركة -->
+    <div class="animated-bg" id="animatedBg"></div>
+    
+    <!-- تأثير تغيير الأسبوع -->
+    <div class="week-transition" id="weekTransition"></div>
+    
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1 class="site-title">متابعة إنجازات الأسابيع (على جهازك فقط)</h1>
+                
+                <div class="date-info" id="currentDate">اليوم (حسب جهازك): جاري التحميل...</div>
+                
+                <div class="theme-selector">
+                    <div class="theme-color theme-turquoise-color active" data-theme="theme-turquoise"></div>
+                    <div class="theme-color theme-blue-color" data-theme="theme-blue"></div>
+                    <div class="theme-color theme-green-color" data-theme="theme-green"></div>
+                    <div class="theme-color theme-yellow-color" data-theme="theme-yellow"></div>
+                    <div class="theme-color theme-pink-color" data-theme="theme-pink"></div>
+                </div>
+                
+                <div class="nav-controls">
+                    <div class="week-nav">
+                        <button class="btn btn-primary" id="prevWeek">
+                            <i class="fas fa-chevron-right"></i> الأسبوع السابق
+                        </button>
+                        <button class="btn btn-primary" id="currentWeek">
+                            <i class="fas fa-calendar-week"></i> هذا الأسبوع
+                        </button>
+                        <button class="btn btn-primary" id="nextWeek">
+                            الأسبوع التالي <i class="fas fa-chevron-left"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="data-controls">
+                        <button class="btn btn-secondary" id="exportData">
+                            <i class="fas fa-download"></i> تصدير
+                        </button>
+                        <button class="btn btn-secondary" id="importData">
+                            <i class="fas fa-upload"></i> استيراد
+                        </button>
+                        <button class="btn btn-secondary" id="deleteAllData">
+                            <i class="fas fa-trash-alt"></i> حذف الكل
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="week-stats" id="weekStats">
+                    الأسبوع: ✅ 0 / 0 — المتبقي: 0 — 0%
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- شريط مختصر -->
+        <section class="quick-bar">
+            <div class="quick-stats" id="quickStats">0% • 0/0</div>
+            <div class="quick-nav">
+                <button class="quick-btn" id="quickPrevWeek">الأسبوع السابق</button>
+                <button class="quick-btn" id="quickCurrentWeek">هذا الأسبوع</button>
+                <button class="quick-btn" id="quickNextWeek">الأسبوع التالي</button>
+            </div>
+        </section>
+
+        <!-- شريط التقدم الأسبوعي الكبير -->
+        <section class="weekly-progress-card">
+            <h2 class="section-title" id="weeklyProgressTitle">التقدم الأسبوعي (الأسبوع المعروض)</h2>
+            
+            <div class="progress-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="completedTasks">0</div>
+                    <div class="stat-label">✅ المنجزة</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="pendingTasks">0</div>
+                    <div class="stat-label">❌ غير المنجزة</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="remainingTasks">0</div>
+                    <div class="stat-label">⏳ المتبقية</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalTasks">0</div>
+                    <div class="stat-label">مجموع المهام</div>
+                </div>
+            </div>
+            
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="weeklyProgressBar"></div>
+            </div>
+            
+            <p class="progress-explanation" id="progressExplanation">إذا كان لديك 3 مهام لكل يوم → 3 × 7 = 21 مهمة أسبوعية</p>
+        </section>
+
+        <!-- شبكة الأيام - مرتبة كل يومين -->
+        <section id="daysGridContainer">
+            <h2 class="section-title">المهام اليومية</h2>
+            <div class="days-grid" id="daysGrid">
+                <!-- سيتم إنشاء الأيام ديناميكياً بواسطة JavaScript -->
+            </div>
+        </section>
+
+        <!-- قسم المهام الأسبوعية -->
+        <section class="weekly-tasks-section">
+            <h2 class="section-title">المهام الأسبوعية</h2>
+            
+            <div class="weekly-input-container">
+                <input type="text" class="weekly-task-input" id="weeklyTaskInput" placeholder="أضف مهمة أسبوعية جديدة...">
+                <button class="add-weekly-task-btn" id="addWeeklyTaskBtn">إضافة</button>
+            </div>
+            
+            <div class="weekly-progress-container">
+                <div class="progress-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="weeklyCompleted">0</div>
+                        <div class="stat-label">المنجز</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="weeklyRemaining">0</div>
+                        <div class="stat-label">المتبقي</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="weeklyPercentage">0%</div>
+                        <div class="stat-label">النسبة %</div>
+                    </div>
+                </div>
+                
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="weeklyTasksProgressBar"></div>
+                </div>
+            </div>
+            
+            <div class="tasks-list" id="weeklyTasksList">
+                <!-- سيتم إنشاء المهام الأسبوعية ديناميكياً -->
+            </div>
+            
+            <button class="clear-weekly-btn" id="clearWeeklyBtn">مسح مهام الأسبوع</button>
+        </section>
+
+        <!-- قسم "رسالة لنفسك" -->
+        <section class="notes-section">
+            <h2 class="section-title">رسالة لنفسك</h2>
+            <textarea class="notes-textarea" id="notesTextarea" placeholder="اكتب رسالة لنفسك هذا الأسبوع..."></textarea>
+            <div class="notes-buttons">
+                <button class="notes-btn save-notes-btn" id="saveNotesBtn">حفظ</button>
+                <button class="notes-btn clear-notes-btn" id="clearNotesBtn">مسح</button>
+            </div>
+        </section>
+
+        <!-- قسم الأسئلة الشائعة -->
+        <section class="faq-section">
+            <h2 class="section-title">الأسئلة الشائعة</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <div class="faq-icon"><i class="fas fa-lock"></i></div>
+                    هل الموقع يتطلب تسجيل دخول؟
+                </div>
+                <div class="faq-answer">
+                    لا، الموقع يعمل محليًا على جهازك فقط ولا يتطلب أي تسجيل دخول. جميع بياناتك تبقى على جهازك ولا يتم إرسالها لأي مكان.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <div class="faq-icon"><i class="fas fa-camera"></i></div>
+                    هل يطلب الموقع صلاحيات استخدام الكاميرا أو الصور؟
+                </div>
+                <div class="faq-answer">
+                    لا، الموقع لا يطلب أي صلاحيات للكاميرا أو الوصول إلى المعرض. إنه مصمم فقط لمتابعة المهام الدراسية.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <div class="faq-icon"><i class="fas fa-shield-alt"></i></div>
+                    هل الموقع آمن؟
+                </div>
+                <div class="faq-answer">
+                    نعم، الموقع آمن 100% لأنه يعمل محليًا على جهازك فقط. جميع البيانات تُحفظ في متصفحك ولا يتم مشاركتها مع أي طرف خارجي.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <div class="faq-icon"><i class="fas fa-wifi"></i></div>
+                    هل أحتاج إلى اتصال بالإنترنت؟
+                </div>
+                <div class="faq-answer">
+                    لا، الموقع يعمل بدون إنترنت تمامًا. بمجرد تحميل الصفحة، يمكنك استخدامه حتى بدون اتصال.
+                </div>
+            </div>
+        </section>
+
+        <!-- زر "أعلى الصفحة" - فوق قسم الحقوق -->
+        <div class="to-top-container">
+            <button class="to-top-btn" id="toTopBtn">
+                <i class="fas fa-arrow-up"></i> أعلى الصفحة
+            </button>
+        </div>
+
+        <!-- قسم حقوق الطبع والنشر والتحفيز -->
+        <section class="footer-section">
+            <div class="copyright">
+                <p>جميع الحقوق محفوظة © 2026</p>
+                <p>هذا الموقع خاص للطلبة ولكل شخص يرغب في تنظيم وقته وتحسين إنتاجيته</p>
+                <p>تم تصميم الموقع ليعمل محليًا على جهازك فقط بدون الحاجة إلى إنترنت أو تخزين سحابي</p>
+            </div>
+            
+            <div class="motivation">✨ كل خطوة صغيرة تقربك من هدفك الكبير ✨</div>
+            
+            <div class="encouragement">شد حيلك يا توجيهي 💪 النجاح قادم!</div>
+        </section>
+    </div>
+
+    <!-- مربع حوار للاستيراد -->
+    <input type="file" id="importFileInput" accept=".json" style="display: none;">
+
+    <script>
+        // بيانات التطبيق
+        let appData = {
+            currentWeekKey: '',
+            weeks: {},
+            theme: 'theme-turquoise'
+        };
+
+        // الأيام العربية - بدءًا من الأحد
+        const arabicDays = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+        
+        // تهيئة التطبيق عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            // إنشاء خلفية متحركة
+            createAnimatedBackground();
+            
+            // تحميل البيانات المحفوظة
+            loadSavedData();
+            
+            // تحديث التاريخ والوقت
+            updateDateTime();
+            setInterval(updateDateTime, 60000);
+            
+            // تهيئة الأسبوع الحالي
+            initializeCurrentWeek();
+            
+            // تعيين أحداث المستخدم
+            setupEventListeners();
+            
+            // تحديث واجهة المستخدم
+            updateUI();
+            
+            // إضافة تأثيرات للأسئلة الشائعة
+            setupFAQEffects();
+        });
+
+        // إنشاء خلفية متحركة
+        function createAnimatedBackground() {
+            const bgContainer = document.getElementById('animatedBg');
+            const elementCount = 15;
+            
+            for (let i = 0; i < elementCount; i++) {
+                const element = document.createElement('div');
+                element.className = 'bg-element';
+                
+                // حجم عشوائي
+                const size = Math.random() * 200 + 50;
+                element.style.width = `${size}px`;
+                element.style.height = `${size}px`;
+                
+                // موقع عشوائي
+                element.style.left = `${Math.random() * 100}%`;
+                element.style.top = `${Math.random() * 100}%`;
+                
+                // توقيت عشوائي للحركة
+                element.style.animationDuration = `${Math.random() * 30 + 20}s`;
+                element.style.animationDelay = `${Math.random() * 5}s`;
+                
+                bgContainer.appendChild(element);
+            }
+        }
+
+        // تحميل البيانات المحفوظة
+        function loadSavedData() {
+            // تحميل السمة
+            const savedTheme = localStorage.getItem('studyTrackerTheme');
+            if (savedTheme) {
+                appData.theme = savedTheme;
+                document.body.className = savedTheme;
+                document.querySelectorAll('.theme-color').forEach(color => {
+                    color.classList.remove('active');
+                    if (color.getAttribute('data-theme') === savedTheme) {
+                        color.classList.add('active');
+                    }
+                });
+            }
+            
+            // تحميل بيانات الأسابيع
+            const savedWeeks = localStorage.getItem('studyTrackerData');
+            if (savedWeeks) {
+                appData.weeks = JSON.parse(savedWeeks);
+            }
+        }
+
+        // حفظ البيانات
+        function saveData() {
+            localStorage.setItem('studyTrackerData', JSON.stringify(appData.weeks));
+        }
+
+        // تحديث التاريخ والوقت
+        function updateDateTime() {
+            const now = new Date();
+            const dayName = arabicDays[now.getDay()];
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            
+            document.getElementById('currentDate').textContent = 
+                `اليوم (حسب جهازك): ${dayName} — ${day}/${month}/${year}`;
+        }
+
+        // تهيئة الأسبوع الحالي
+        function initializeCurrentWeek() {
+            const now = new Date();
+            const currentWeekKey = getWeekKey(now);
+            
+            if (!appData.weeks[currentWeekKey]) {
+                createWeekData(currentWeekKey);
+            }
+            
+            appData.currentWeekKey = currentWeekKey;
+        }
+
+        // الحصول على مفتاح الأسبوع (YYYY-WW)
+        function getWeekKey(date) {
+            const year = date.getFullYear();
+            const firstDayOfYear = new Date(year, 0, 1);
+            const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+            const weekNumber = Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+            
+            return `${year}-W${String(weekNumber).padStart(2, '0')}`;
+        }
+
+        // إنشاء بيانات أسبوع جديدة
+        function createWeekData(weekKey) {
+            const days = [];
+            const today = new Date();
+            
+            const currentDay = today.getDay();
+            const startDate = new Date(today);
+            startDate.setDate(today.getDate() - currentDay);
+            
+            for (let i = 0; i < 7; i++) {
+                const dayDate = new Date(startDate);
+                dayDate.setDate(startDate.getDate() + i);
+                
+                const dayData = {
+                    id: i,
+                    name: arabicDays[i],
+                    date: formatDate(dayDate),
+                    tasks: []
+                };
+                
+                days.push(dayData);
+            }
+            
+            appData.weeks[weekKey] = {
+                weekKey: weekKey,
+                days: days,
+                weeklyTasks: [],
+                notes: ''
+            };
+            
+            saveData();
+        }
+
+        // تنسيق التاريخ
+        function formatDate(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        // تعيين أحداث المستخدم
+        function setupEventListeners() {
+            // أحداث أزرار التنقل بين الأسابيع
+            document.getElementById('prevWeek').addEventListener('click', () => navigateToWeek('prev'));
+            document.getElementById('currentWeek').addEventListener('click', () => navigateToWeek('current'));
+            document.getElementById('nextWeek').addEventListener('click', () => navigateToWeek('next'));
+            
+            // أحداث شريط التنقل السريع
+            document.getElementById('quickPrevWeek').addEventListener('click', () => navigateToWeek('prev'));
+            document.getElementById('quickCurrentWeek').addEventListener('click', () => navigateToWeek('current'));
+            document.getElementById('quickNextWeek').addEventListener('click', () => navigateToWeek('next'));
+            
+            // أحداث أزرار التحكم في البيانات
+            document.getElementById('exportData').addEventListener('click', exportData);
+            document.getElementById('importData').addEventListener('click', importData);
+            document.getElementById('deleteAllData').addEventListener('click', deleteAllData);
+            
+            // أحداث اختيار السمة
+            document.querySelectorAll('.theme-color').forEach(color => {
+                color.addEventListener('click', function() {
+                    const theme = this.getAttribute('data-theme');
+                    changeTheme(theme);
+                });
+            });
+            
+            // أحداث زر "أعلى الصفحة"
+            document.getElementById('toTopBtn').addEventListener('click', function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            // أحداث المهام الأسبوعية
+            document.getElementById('addWeeklyTaskBtn').addEventListener('click', addWeeklyTask);
+            document.getElementById('weeklyTaskInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') addWeeklyTask();
+            });
+            document.getElementById('clearWeeklyBtn').addEventListener('click', clearWeeklyTasks);
+            
+            // أحداث قسم الملاحظات
+            document.getElementById('saveNotesBtn').addEventListener('click', saveNotes);
+            document.getElementById('clearNotesBtn').addEventListener('click', clearNotes);
+        }
+
+        // إعداد تأثيرات الأسئلة الشائعة
+        function setupFAQEffects() {
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach((item, index) => {
+                // تأثير ظهور تدريجي
+                setTimeout(() => {
+                    item.classList.add('faq-reveal');
+                }, index * 100);
+                
+                // تأثير عند النقر
+                item.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                });
+            });
+        }
+
+        // التنقل بين الأسابيع مع تأثيرات
+        function navigateToWeek(direction) {
+            // تشغيل تأثير الانتقال
+            const transition = document.getElementById('weekTransition');
+            transition.classList.add('active');
+            
+            setTimeout(() => {
+                let targetWeekKey;
+                
+                if (direction === 'prev') {
+                    targetWeekKey = getPrevWeekKey();
+                } else if (direction === 'next') {
+                    targetWeekKey = getNextWeekKey();
+                } else {
+                    const now = new Date();
+                    targetWeekKey = getWeekKey(now);
+                }
+                
+                if (!appData.weeks[targetWeekKey]) {
+                    createWeekData(targetWeekKey);
+                }
+                
+                appData.currentWeekKey = targetWeekKey;
+                
+                // إيقاف تأثير الانتقال
+                setTimeout(() => {
+                    transition.classList.remove('active');
+                }, 300);
+                
+                updateUI();
+                
+            }, 300);
+        }
+
+        // الحصول على مفتاح الأسبوع السابق
+        function getPrevWeekKey() {
+            const currentKey = appData.currentWeekKey;
+            const [year, week] = currentKey.split('-W');
+            let prevWeek = parseInt(week) - 1;
+            let prevYear = parseInt(year);
+            
+            if (prevWeek < 1) {
+                prevYear--;
+                prevWeek = 52;
+            }
+            
+            return `${prevYear}-W${String(prevWeek).padStart(2, '0')}`;
+        }
+
+        // الحصول على مفتاح الأسبوع التالي
+        function getNextWeekKey() {
+            const currentKey = appData.currentWeekKey;
+            const [year, week] = currentKey.split('-W');
+            let nextWeek = parseInt(week) + 1;
+            let nextYear = parseInt(year);
+            
+            if (nextWeek > 52) {
+                nextYear++;
+                nextWeek = 1;
+            }
+            
+            return `${nextYear}-W${String(nextWeek).padStart(2, '0')}`;
+        }
+
+        // تغيير سمة الموقع
+        function changeTheme(theme) {
+            appData.theme = theme;
+            document.body.className = theme;
+            
+            document.querySelectorAll('.theme-color').forEach(color => {
+                color.classList.remove('active');
+                if (color.getAttribute('data-theme') === theme) {
+                    color.classList.add('active');
+                }
+            });
+            
+            localStorage.setItem('studyTrackerTheme', theme);
+        }
+
+        // تحديث واجهة المستخدم
+        function updateUI() {
+            const currentWeek = appData.weeks[appData.currentWeekKey];
+            if (!currentWeek) return;
+            
+            document.getElementById('weeklyProgressTitle').textContent = 
+                `التقدم الأسبوعي (الأسبوع ${appData.currentWeekKey.split('-W')[1]})`;
+            
+            let totalTasks = 0;
+            let completedTasks = 0;
+            let pendingTasks = 0;
+            
+            currentWeek.days.forEach(day => {
+                day.tasks.forEach(task => {
+                    totalTasks++;
+                    if (task.status === 'completed') completedTasks++;
+                    else if (task.status === 'cancelled') pendingTasks++;
+                });
+            });
+            
+            currentWeek.weeklyTasks.forEach(task => {
+                totalTasks++;
+                if (task.status === 'completed') completedTasks++;
+                else if (task.status === 'cancelled') pendingTasks++;
+            });
+            
+            const remainingTasks = totalTasks - completedTasks - pendingTasks;
+            const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+            
+            document.getElementById('weekStats').textContent = 
+                `الأسبوع: ✅ ${completedTasks} / ${totalTasks} — المتبقي: ${remainingTasks} — ${completionPercentage}%`;
+            
+            document.getElementById('quickStats').textContent = 
+                `${completionPercentage}% • ${completedTasks}/${totalTasks}`;
+            
+            document.getElementById('completedTasks').textContent = completedTasks;
+            document.getElementById('pendingTasks').textContent = pendingTasks;
+            document.getElementById('remainingTasks').textContent = remainingTasks;
+            document.getElementById('totalTasks').textContent = totalTasks;
+            
+            const progressBar = document.getElementById('weeklyProgressBar');
+            progressBar.style.width = `${completionPercentage}%`;
+            
+            const exampleTasks = currentWeek.days.length * 3;
+            document.getElementById('progressExplanation').textContent = 
+                `إذا كان لديك 3 مهام لكل يوم → 3 × 7 = ${exampleTasks} مهمة أسبوعية`;
+            
+            updateDaysGrid();
+            updateWeeklyTasks();
+            document.getElementById('notesTextarea').value = currentWeek.notes || '';
+            saveData();
+        }
+
+        // تحديث شبكة الأيام
+        function updateDaysGrid() {
+            const currentWeek = appData.weeks[appData.currentWeekKey];
+            if (!currentWeek) return;
+            
+            const daysGrid = document.getElementById('daysGrid');
+            daysGrid.innerHTML = '';
+            
+            currentWeek.days.forEach(day => {
+                const totalDayTasks = day.tasks.length;
+                const completedDayTasks = day.tasks.filter(task => task.status === 'completed').length;
+                const pendingDayTasks = day.tasks.filter(task => task.status === 'cancelled').length;
+                const remainingDayTasks = totalDayTasks - completedDayTasks - pendingDayTasks;
+                const dayCompletionPercentage = totalDayTasks > 0 ? Math.round((completedDayTasks / totalDayTasks) * 100) : 0;
+                
+                const dayCard = document.createElement('div');
+                dayCard.className = 'day-card';
+                dayCard.innerHTML = `
+                    <div class="day-header">
+                        <div class="day-name">${day.name}</div>
+                        <div class="day-date">${day.date}</div>
+                    </div>
+                    
+                    <div class="task-input-container">
+                        <input type="text" class="task-input" placeholder="أضف مهمة جديدة..." data-day="${day.id}">
+                        <button class="add-task-btn" data-day="${day.id}">إضافة</button>
+                    </div>
+                    
+                    <div class="day-stats">
+                        <div class="day-stat">
+                            <div class="day-stat-value">${totalDayTasks}</div>
+                            <div class="day-stat-label">عدد المهام</div>
+                        </div>
+                        <div class="day-stat">
+                            <div class="day-stat-value">${completedDayTasks}</div>
+                            <div class="day-stat-label">المنجز</div>
+                        </div>
+                        <div class="day-stat">
+                            <div class="day-stat-value">${remainingDayTasks}</div>
+                            <div class="day-stat-label">المتبقي</div>
+                        </div>
+                        <div class="day-stat">
+                            <div class="day-stat-value">${dayCompletionPercentage}%</div>
+                            <div class="day-stat-label">النسبة %</div>
+                        </div>
+                    </div>
+                    
+                    <div class="day-progress-bar">
+                        <div class="day-progress" style="width: ${dayCompletionPercentage}%"></div>
+                    </div>
+                    
+                    <div class="tasks-list" id="tasksList-${day.id}"></div>
+                `;
+                
+                daysGrid.appendChild(dayCard);
+                updateDayTasksList(day.id);
+            });
+            
+            document.querySelectorAll('.add-task-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const dayId = parseInt(this.getAttribute('data-day'));
+                    const input = document.querySelector(`.task-input[data-day="${dayId}"]`);
+                    addDayTask(dayId, input.value);
+                    input.value = '';
+                });
+            });
+            
+            document.querySelectorAll('.task-input').forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const dayId = parseInt(this.getAttribute('data-day'));
+                        addDayTask(dayId, this.value);
+                        this.value = '';
+                    }
+                });
+            });
+        }
+
+        // تحديث قائمة مهام اليوم
+        function updateDayTasksList(dayId) {
+            const currentWeek = appData.weeks[appData.currentWeekKey];
+            if (!currentWeek) return;
+            
+            const day = currentWeek.days.find(d => d.id === dayId);
+            if (!day) return;
+            
+            const tasksList = document.getElementById(`tasksList-${dayId}`);
+            tasksList.innerHTML = '';
+            
+            day.tasks.forEach((task, index) => {
+                const taskItem = document.createElement('div');
+                taskItem.className = `task-item ${task.status}`;
+                taskItem.innerHTML = `
+                    <button class="task-btn complete" data-day="${dayId}" data-task="${index}">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <div class="task-text">${task.text}</div>
+                    <div class="task-actions">
+                        <button class="task-btn cancel" data-day="${dayId}" data-task="${index}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <button class="task-btn edit" data-day="${dayId}" data-task="${index}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="task-btn delete" data-day="${dayId}" data-task="${index}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                `;
+                
+                tasksList.appendChild(taskItem);
+            });
+            
+            // إضافة أحداث لأزرار المهام
+            tasksList.querySelectorAll('.task-btn.complete').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const dayId = parseInt(this.getAttribute('data-day'));
+                    const taskIndex = parseInt(this.getAttribute('data-task'));
+                    updateTaskStatus(dayId, taskIndex, 'completed');
+                });
+            });
+            
+            tasksList.querySelectorAll('.task-btn.cancel').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const dayId = parseInt(this.getAttribute('data-day'));
+                    const taskIndex = parseInt(this.getAttribute('data-task'));
+                    updateTaskStatus(dayId, taskIndex, 'cancelled');
+                });
+            });
+            
+            tasksList.querySelectorAll('.task-btn.edit').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const dayId = parseInt(this.getAttribute('data-day'));
+                    const taskIndex = parseInt(this.getAttribute('data-task'));
+                    editTask(dayId, taskIndex);
+                });
+            });
+            
+            tasksList.querySelectorAll('.task-btn.delete').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const dayId = parseInt(this.getAttribute('data-day'));
+                    const taskIndex = parseInt(this.getAttribute('data-task'));
+                    deleteTask(dayId, taskIndex);
+                });
+            });
+        }
+
+        // إضافة مهمة يومية
+        function addDayTask(dayId, text) {
+            if (!text.trim()) return;
+            
+            const currentWeek = appData.weeks[appData.currentWeekKey];
+            if (!currentWeek) return;
+            
+            const day = currentWeek.days.find(d => d.id === dayId);
+            if (!day) return;
+            
+            day.tasks.push({
+                text: text.trim(),
+                status: 'pending'
+            });
+            
+            updateUI();
+        }
+
+        // تحديث حالة المهمة (مع تأثيرات التحقق فقط)
+        function updateTaskStatus(dayId, taskIndex, status) {
+            const currentWeek = appData.weeks[appData.currentWeekKey];
+            if (!currentWeek) return;
+            
+            const day = currentWeek.days.find(d => d.id === dayId);
+            if (!day || !day.tasks[taskIndex]) return;
+            
+            day.tasks[taskIndex].status = status;
+            
+            // تأثيرات بصرية عند التحقق
+            const taskElement = document.querySelector(`.task-btn[data-day="${dayId}"][data-task="${taskIndex}"]`);
+            if (taskElement) {
+                const taskItem = taskElement.closest('.task-item');
+                
+                if (status === 'completed') {
+                    // تأثير النجاح عند الضغط على ✅
+                    createConfetti();
+                    
+                    // تأثير النبض الأخضر
+                    const successEffect = document.createElement('div');
+                    successEffect.className = 'task-success-effect';
+                    taskItem.style.position = 'relative';
+                    taskItem.appendChild(successEffect);
+                    
+                    setTimeout(() => {
+                        successEffect.remove();
+                    }, 1000);
+                    
+                } else if (status === 'cancelled') {
+                    // تأثير الخطأ عند الضغط على ❌
+                    taskItem.classList.add('shake');
+                    
+                    // تأثير النبض الأحمر
+                    const errorEffect = document.createElement('div');
+                    errorEffect.className = 'task-error-effect';
+                    taskItem.style.position = 'relative';
+                    taskItem.appendChild(errorEffect);
+                    
+                    setTimeout(() => {
+                        taskItem.classList.remove('shake');
+                        errorEffect.remove();
+                    }, 1000);
+                }
+            }
+            
+            updateUI();
+        }
+
+        // تعديل مهمة
+        function editTask(dayId, taskIndex) {
+            const currentWeek = appData.weeks[appData.currentWeekKey];
+            if (!currentWeek) return;
+            
+            const day = currentWeek.days.find(d => d.id === dayId);
+            if (!day || !day.tasks[taskIndex]) return;
+            
+            const newText = prompt('عدّل نص المهمة:', day.tasks[taskIndex].text);
+            if (newText !== null && newText.trim() !== '') {
+                day.tasks[taskIndex].text = newText.trim();
+                updateUI();
+            }
+        }
+
+        // حذف مهمة مباشرة بدون تأكيد
+        function deleteTask(dayId, taskIndex) {
+            const currentWeek = appData.weeks[appData.currentWeekKey];
+            if (!currentWeek) return;
+            
+            const day = currentWeek.days.find(d => d.id === dayId);
+            if (!day || !day.tasks[taskIndex]) return;
+            
+            day.tasks.splice(taskIndex, 1);
+            updateUI();
+        }
+
+        // تحديث المهام الأسبوعية
+        function updateWeeklyTasks() {
+            const currentWeek = appData.weeks[appData.currentWeekKey];
+            if (!currentWeek) return;
+            
+            const totalWeeklyTasks = currentWeek.weeklyTasks.length;
+            const completedWeeklyTasks = currentWeek.weeklyTasks.filter(task => task.status === 'completed').length;
+            const weeklyCompletionPercentage = totalWeeklyTasks > 0 ? Math.round((completedWeeklyTasks / totalWeeklyTasks) * 100) : 0;
+            const remainingWeeklyTasks = totalWeeklyTasks - completedWeeklyTasks;
+            
+            document.getElementById('weeklyCompleted').textContent = completedWeeklyTasks;
+            document.getElementById('weeklyRemaining').textContent = remainingWeeklyTasks;
+            document.getElementById('weeklyPercentage').textContent = `${weeklyCompletionPercentage}%`;
+            
+            document.getElementById('weeklyTasksProgressBar').style.width = `${weeklyCompletionPercentage}%`;
+            
+            const weeklyTasksList = document.getElementById('weeklyTasksList');
+            weeklyTasksList.innerHTML = '';
+            
+            currentWeek.weeklyTasks.forEach((task, index) => {
+                const taskItem = document.createElement('div');
+                taskItem.className = `task-item ${task.status}`;
+                taskItem.innerHTML = `
+                    <button class="task-btn complete" data-weekly="true" data-task="${index}">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <div class="task-text">${task.text}</div>
+                    <div class="task-actions">
+                        <button class="task-btn cancel" data-weekly="true" data-task="${index}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <button class="task-btn edit" data-weekly="true" data-task="${index}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="task-btn delete" data-weekly="true" data-task="${index}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                `;
+                
+                weeklyTasksList.appendChild(taskItem);
+            });
+            
+            weeklyTasksList.querySelectorAll('.task-btn.complete').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const taskIndex = parseInt(this.getAttribute('data-task'));
+                    updateWeeklyTaskStatus(taskIndex, 'completed');
+                });
+            });
+            
+            weeklyTasksList.querySelectorAll('.task-btn.cancel').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const taskIndex = parseInt(this.getAttribute('data-task'));
+                    updateWeeklyTaskStatus(taskIndex, 'cancelled');
+                });
+            });
+            
+            weeklyTasksList.querySelectorAll('.task-btn.edit').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const taskIndex = parseInt(this.getAttribute('data-task'));
+                    editWeeklyTask(taskIndex);
+                });
+            });
+            
+            weeklyTasksList.querySelectorAll('.task-btn.delete').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const taskIndex = parseInt(this.getAttribute('data-task'));
+                    deleteWeeklyTask(taskIndex);
+                });
+            });
+        }
+
+        // إضافة مهمة أسبوعية
+        function addWeeklyTask() {
+            const input = document.getElementById('weeklyTaskInput');
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            const currentWeek = appData.weeks[appData.currentWeekKey];
+            if (!currentWeek) return;
+            
+            currentWeek.weeklyTasks.push({
+                text: text,
+                status: 'pending'
+            });
+            
+            input.value = '';
+            updateUI();
+        }
+
+        // تحديث حالة المهمة الأسبوعية (مع تأثيرات التحقق فقط)
+        function updateWeeklyTaskStatus(taskIndex, status) {
+            const currentWeek = appData.weeks[appData.currentWeekKey];
+            if (!currentWeek || !currentWeek.weeklyTasks[taskIndex]) return;
+            
+            currentWeek.weeklyTasks[taskIndex].status = status;
+            
+            // تأثيرات بصرية عند التحقق
+            const taskElement = document.querySelector(`.task-btn[data-weekly="true"][data-task="${taskIndex}"]`);
+            if (taskElement) {
+                const taskItem = taskElement.closest('.task-item');
+                
+                if (status === 'completed') {
+                    createConfetti();
+                    
+                    const successEffect = document.createElement('div');
+                    successEffect.className = 'task-success-effect';
+                    taskItem.style.position = 'relative';
+                    taskItem.appendChild(successEffect);
+                    
+                    setTimeout(() => {
+                        successEffect.remove();
+                    }, 1000);
+                    
+                } else if (status === 'cancelled') {
+                    taskItem.classList.add('shake');
+                    
+                    const errorEffect = document.createElement('div');
+                    errorEffect.className = 'task-error-effect';
+                    taskItem.style.position = 'relative';
+                    taskItem.appendChild(errorEffect);
+                    
+                    setTimeout(() => {
+                        taskItem.classList.remove('shake');
+                        errorEffect.remove();
+                    }, 1000);
+                }
+            }
+            
+            updateUI();
+        }
+
+        // تعديل مهمة أسبوعية
+        function editWeeklyTask(taskIndex) {
+            const currentWeek = appData.weeks[appData.currentWeekKey];
+            if (!currentWeek || !currentWeek.weeklyTasks[taskIndex]) return;
+            
+            const newText = prompt('عدّل نص المهمة الأسبوعية:', currentWeek.weeklyTasks[taskIndex].text);
+            if (newText !== null && newText.trim() !== '') {
+                currentWeek.weeklyTasks[taskIndex].text = newText.trim();
+                updateUI();
+            }
+        }
+
+        // حذف مهمة أسبوعية
+        function deleteWeeklyTask(taskIndex) {
+            const currentWeek = appData.weeks[appData.currentWeekKey];
+            if (!currentWeek || !currentWeek.weeklyTasks[taskIndex]) return;
+            
+            currentWeek.weeklyTasks.splice(taskIndex, 1);
+            updateUI();
+        }
+
+        // مسح جميع المهام الأسبوعية
+        function clearWeeklyTasks() {
+            const currentWeek = appData.weeks[appData.currentWeekKey];
+            if (currentWeek) {
+                currentWeek.weeklyTasks = [];
+                updateUI();
+            }
+        }
+
+        // حفظ الملاحظات
+        function saveNotes() {
+            const currentWeek = appData.weeks[appData.currentWeekKey];
+            if (!currentWeek) return;
+            
+            const notesText = document.getElementById('notesTextarea').value;
+            currentWeek.notes = notesText;
+            
+            saveData();
+        }
+
+        // مسح الملاحظات
+        function clearNotes() {
+            document.getElementById('notesTextarea').value = '';
+            const currentWeek = appData.weeks[appData.currentWeekKey];
+            if (currentWeek) {
+                currentWeek.notes = '';
+                saveData();
+            }
+        }
+
+        // تصدير البيانات
+        function exportData() {
+            const dataStr = JSON.stringify(appData.weeks, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `متابعة-الأسابيع-${new Date().toISOString().split('T')[0]}.json`;
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // استيراد البيانات
+        function importData() {
+            document.getElementById('importFileInput').click();
+        }
+
+        // معالجة استيراد الملف
+        document.getElementById('importFileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    appData.weeks = importedData;
+                    saveData();
+                    updateUI();
+                } catch (error) {
+                    alert('خطأ في قراءة الملف. يرجى التأكد من صحة الملف.');
+                }
+            };
+            
+            reader.readAsText(file);
+            event.target.value = '';
+        });
+
+        // حذف جميع البيانات
+        function deleteAllData() {
+            localStorage.removeItem('studyTrackerData');
+            appData.weeks = {};
+            initializeCurrentWeek();
+            updateUI();
+        }
+
+        // إنشاء تأثير الكونفيتي
+        function createConfetti() {
+            const colors = ['#06b6d4', '#3b82f6', '#10b981', '#f59e0b', '#ec4899'];
+            
+            for (let i = 0; i < 60; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = `${Math.random() * 100}vw`;
+                confetti.style.top = '-20px';
+                confetti.style.width = `${Math.random() * 10 + 5}px`;
+                confetti.style.height = confetti.style.width;
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 1500);
+            }
+        }
+    </script>
+</body>
+</html>
